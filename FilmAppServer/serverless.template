@@ -37,7 +37,7 @@
     "GetFilms" : {
       "Type" : "AWS::Serverless::Function",
       "Properties": {
-        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::GetFilmsAsync",
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions.GetFilms::PerformAsync",
         "Runtime": "dotnetcore1.0",
         "CodeUri": "",
         "Description": "Function to get a list of films",
@@ -65,7 +65,7 @@
     "GetFilm" : {
       "Type" : "AWS::Serverless::Function",
       "Properties": {
-        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::GetFilmAsync",
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions.GetFilm::PerformAsync",
         "Runtime": "dotnetcore1.0",
         "CodeUri": "",
         "Description": "Function to get a single film",
@@ -94,7 +94,7 @@
     "AddFilm" : {
       "Type" : "AWS::Serverless::Function",
       "Properties": {
-        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::AddFilmAsync",
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions.AddFilm::PerformAsync",
         "Runtime": "dotnetcore1.0",
         "CodeUri": "",
         "Description": "Function to add a film",
@@ -122,7 +122,7 @@
     "UpdateFilm" : {
       "Type" : "AWS::Serverless::Function",
       "Properties": {
-        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::UpdateFilmAsync",
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions.UpdateFilm::PerformAsync",
         "Runtime": "dotnetcore1.0",
         "CodeUri": "",
         "Description": "Function to update a film",
@@ -150,7 +150,7 @@
     "RemoveFilm" : {
       "Type" : "AWS::Serverless::Function",
       "Properties": {
-        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::RemoveFilmAsync",
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions.RemoveFilm::PerformAsync",
         "Runtime": "dotnetcore1.0",
         "CodeUri": "",
         "Description": "Function to remove a film",

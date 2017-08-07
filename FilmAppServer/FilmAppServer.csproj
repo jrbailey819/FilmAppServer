@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Films\Functions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.4.7" />
 
     <PackageReference Include="Amazon.Lambda.Core" Version="1.0.0" />
