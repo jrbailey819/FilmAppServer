@@ -11,7 +11,7 @@ namespace FilmAppServer.Films
         public string Title { get; set; }
         public string Director { get; set; }
         public DateTime? ReleaseDate { get; set; }
-        public int Rating { get; set; }
+        public int? Rating { get; set; }
         public DateTime CreatedTimestamp { get; set; }
     }
 }
