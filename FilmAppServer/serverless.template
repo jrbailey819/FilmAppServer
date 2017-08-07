@@ -1,0 +1,202 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Transform" : "AWS::Serverless-2016-10-31",
+  "Description" : "AWS Serverless API that exposes the add, update, remove and get operations for a film app using Amazon DynamoDB.",
+  "Parameters" : {
+    "ShouldCreateTable" : {
+      "Type" : "String",        
+      "AllowedValues" : ["true", "false"],
+      "Description" : "If true then the DynamoDB film table will be created with the CloudFormation stack."
+    },  
+    "FilmTableName" : {
+        "Type" : "String",
+        "Description" : "Name of DynamoDB table used to store the film. If left blank a new table will be created.",
+        "MinLength" : "0"
+    },
+    "ReadCapacity" : {
+        "Type" : "Number",
+        "Description" : "Read capacity for the DynamoDB film table.",
+        "Default" : "1",
+        "MinValue" : 1
+    },
+    "WriteCapacity" : {
+        "Type" : "Number",
+        "Description" : "Write capacity for the DynamoDB film table.",
+        "Default" : "1",
+        "MinValue" : 1
+    }
+  },
+
+  "Conditions" : {
+    "CreateFilmTable" : {"Fn::Equals" : [{"Ref" : "ShouldCreateTable"}, "true"]},
+	  "TableNameGenerated" : {"Fn::Equals" : [{"Ref" : "FilmTableName"}, ""]}
+  },
+
+  "Resources" : {
+
+    "GetFilms" : {
+      "Type" : "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::GetFilmsAsync",
+        "Runtime": "dotnetcore1.0",
+        "CodeUri": "",
+        "Description": "Function to get a list of films",
+        "MemorySize": 128,
+        "Timeout": 20,
+        "Role": null,
+        "Policies": [ "AWSLambdaFullAccess" ],
+        "Environment" : {
+          "Variables" : {
+            "FilmTable" : { "Fn::If" : ["CreateFilmTable", {"Ref":"FilmTable"}, { "Ref" : "FilmTableName" } ] }
+          }
+        },
+        "Events": {
+          "PutResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/",
+              "Method": "GET"
+            }
+          }
+        }
+      }
+    },
+
+    "GetFilm" : {
+      "Type" : "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::GetFilmAsync",
+        "Runtime": "dotnetcore1.0",
+        "CodeUri": "",
+        "Description": "Function to get a single film",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [ "AWSLambdaFullAccess" ],
+        "Environment" : {
+          "Variables" : {
+            "FilmTable" : { "Fn::If" : ["CreateFilmTable", {"Ref":"FilmTable"}, { "Ref" : "FilmTableName" } ] }
+          }
+        },
+        "Events": {
+          "PutResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/{Id}",
+              "Method": "GET"
+            }
+          }
+        }
+      }
+    },
+    
+
+    "AddFilm" : {
+      "Type" : "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::AddFilmAsync",
+        "Runtime": "dotnetcore1.0",
+        "CodeUri": "",
+        "Description": "Function to add a film",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [ "AWSLambdaFullAccess" ],
+        "Environment" : {
+          "Variables" : {
+            "FilmTable" : { "Fn::If" : ["CreateFilmTable", {"Ref":"FilmTable"}, { "Ref" : "FilmTableName" } ] }
+          }
+        },
+        "Events": {
+          "PutResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/",
+              "Method": "POST"
+            }
+          }
+        }
+      }
+    },
+
+    "UpdateFilm" : {
+      "Type" : "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::UpdateFilmAsync",
+        "Runtime": "dotnetcore1.0",
+        "CodeUri": "",
+        "Description": "Function to update a film",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [ "AWSLambdaFullAccess" ],
+        "Environment" : {
+          "Variables" : {
+            "FilmTable" : { "Fn::If" : ["CreateFilmTable", {"Ref":"FilmTable"}, { "Ref" : "FilmTableName" } ] }
+          }
+        },
+        "Events": {
+          "PutResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/{Id}",
+              "Method": "PUT"
+            }
+          }
+        }
+      }
+    },
+
+    "RemoveFilm" : {
+      "Type" : "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "FilmAppServer::FilmAppServer.Films.Functions::RemoveFilmAsync",
+        "Runtime": "dotnetcore1.0",
+        "CodeUri": "",
+        "Description": "Function to remove a film",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [ "AWSLambdaFullAccess" ],
+        "Environment" : {
+          "Variables" : {
+            "FilmTable" : { "Fn::If" : ["CreateFilmTable", {"Ref":"FilmTable"}, { "Ref" : "FilmTableName" } ] }
+          }
+        },
+        "Events": {
+          "PutResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/{Id}",
+              "Method": "DELETE"
+            }
+          }
+        }
+      }
+    },
+
+    "FilmTable" : {
+        "Type" : "AWS::DynamoDB::Table",
+        "Condition" : "CreateFilmTable",
+        "Properties" : {
+            "TableName" : { "Fn::If" : ["TableNameGenerated", {"Ref" : "AWS::NoValue" }, { "Ref" : "FilmTableName" } ] },
+            "AttributeDefinitions" : [
+              {"AttributeName" : "Id", "AttributeType" : "S"}
+            ],
+            "KeySchema"            : [
+              {"AttributeName" : "Id", "KeyType" : "HASH"}
+            ],
+            "ProvisionedThroughput" : {
+                "ReadCapacityUnits" : { "Ref" : "ReadCapacity" },
+                "WriteCapacityUnits" : { "Ref" : "WriteCapacity" }
+            }
+        }
+    }
+  },
+
+  "Outputs" : {
+    "FilmTable" : {
+        "Value" : { "Fn::If" : ["CreateFilmTable", {"Ref":"FilmTable"}, { "Ref" : "FilmTableName" } ] }
+    }
+  }
+}
